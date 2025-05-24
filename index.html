@@ -1,72 +1,168 @@
-<div class="ghl-dashboard">
-  <h2>📈 Business Performance Overview</h2>
+<!-- Subscription Revenue Dashboard with Month Filter -->
+<div class="ghl-subscription-dashboard-container">
+  <section class="ghl-subscription-dashboard">
+    <div class="ghl-header">
+      <h2>📊 <span>Subscription Revenue Overview</span></h2>
 
-  <div class="ghl-stats">
-    <div class="ghl-card">
-      <h3>Active Paid Customers</h3>
-      <p id="active-paid-customers">134</p>
+      <div class="ghl-filter">
+        <label for="monthSelector">📅 Filter by Month:</label>
+        <select id="monthSelector">
+          <option value="2025-05">May 2025</option>
+          <option value="2025-04">April 2025</option>
+          <option value="2025-03">March 2025</option>
+        </select>
+      </div>
     </div>
 
-    <div class="ghl-card">
-      <h3>Payments This Month</h3>
-      <p id="monthly-payments">$18,200</p>
+    <div class="ghl-dashboard-grid">
+      <div class="ghl-dashboard-card">
+        <p class="label">Active Paid Customers</p>
+        <p class="value" id="activeCustomers">--</p>
+      </div>
+      <div class="ghl-dashboard-card">
+        <p class="label">Total MRR</p>
+        <p class="value" id="totalMRR">--</p>
+      </div>
+      <div class="ghl-dashboard-card">
+        <p class="label">Collected This Month</p>
+        <p class="value" id="collected">--</p>
+      </div>
+      <div class="ghl-dashboard-card">
+        <p class="label">Remaining to Collect</p>
+        <p class="value" id="remaining">--</p>
+      </div>
     </div>
-
-    <div class="ghl-card">
-      <h3>Remaining to Collect</h3>
-      <p id="remaining-balance">$4,300</p>
-    </div>
-
-    <div class="ghl-card">
-      <h3>Total Monthly Recurring Revenue</h3>
-      <p id="monthly-mrr">$22,500</p>
-    </div>
-  </div>
+  </section>
 </div>
 
 <style>
-  .ghl-dashboard {
-    padding: 30px;
-    background-color: #f0f4f8;
-    font-family: Arial, sans-serif;
-    color: #333;
+  .ghl-subscription-dashboard-container {
+    width: 100%;
     max-width: 1200px;
-    margin: auto;
+    margin: 0 auto;
+    padding: 10px 20px;
+    box-sizing: border-box;
   }
 
-  .ghl-dashboard h2 {
-    text-align: center;
-    color: #007acc;
-    margin-bottom: 40px;
+  .ghl-subscription-dashboard {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    margin-bottom: 30px;
   }
 
-  .ghl-stats {
+  .ghl-header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
-    justify-content: space-around;
+    margin-bottom: 25px;
+  }
+
+  .ghl-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2b6cb0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ghl-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ghl-filter label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #4a5568;
+  }
+
+  .ghl-filter select {
+    padding: 8px 12px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e0;
+    background: #f7fafc;
+    color: #2d3748;
+  }
+
+  .ghl-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
   }
 
-  .ghl-card {
-    background: white;
+  .ghl-dashboard-card {
+    background: linear-gradient(to bottom, #edf2f7, #e2e8f0);
+    padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    padding: 25px;
-    flex: 1 1 250px;
     text-align: center;
-    border-left: 5px solid #007acc;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+    transition: 0.3s;
   }
 
-  .ghl-card h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: #666;
+  .ghl-dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   }
 
-  .ghl-card p {
-    font-size: 28px;
+  .ghl-dashboard-card .label {
+    font-size: 14px;
+    color: #4a5568;
+    margin-bottom: 8px;
+  }
+
+  .ghl-dashboard-card .value {
+    font-size: 24px;
     font-weight: bold;
-    color: #000;
-    margin: 0;
+    color: #2b6cb0;
   }
 </style>
+
+<script>
+  const dummyData = {
+    "2025-05": {
+      activeCustomers: 120,
+      totalMRR: 40000,
+      collected: 20000
+    },
+    "2025-04": {
+      activeCustomers: 110,
+      totalMRR: 36000,
+      collected: 31000
+    },
+    "2025-03": {
+      activeCustomers: 100,
+      totalMRR: 34000,
+      collected: 32000
+    }
+  };
+
+  const monthSelector = document.getElementById("monthSelector");
+  const activeCustomersEl = document.getElementById("activeCustomers");
+  const totalMRREl = document.getElementById("totalMRR");
+  const collectedEl = document.getElementById("collected");
+  const remainingEl = document.getElementById("remaining");
+
+  function updateDashboard(month) {
+    const data = dummyData[month] || { activeCustomers: 0, totalMRR: 0, collected: 0 };
+    const remaining = data.totalMRR - data.collected;
+
+    activeCustomersEl.textContent = data.activeCustomers;
+    totalMRREl.textContent = "$" + data.totalMRR.toLocaleString();
+    collectedEl.textContent = "$" + data.collected.toLocaleString();
+    remainingEl.textContent = "$" + remaining.toLocaleString();
+  }
+
+  monthSelector.addEventListener("change", (e) => {
+    updateDashboard(e.target.value);
+  });
+
+  // Initial Load
+  updateDashboard(monthSelector.value);
+</script>
